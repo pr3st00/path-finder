@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build">
+    <target name="build">
+    	
+         <jar destfile="C:/JAVA/path-finder.jar">
+            <manifest>
+                <attribute name="Main-Class" value="br.com.fernandoalmeida.pathfinder.PathFinderMain"/>
+             </manifest>
+             <fileset dir="C:/JAVA/workspace2/PATH-FINDER/bin"/>
+        </jar>
+    	
+    </target>
+	
+</project>
