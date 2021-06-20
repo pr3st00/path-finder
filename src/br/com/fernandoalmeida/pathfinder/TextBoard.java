@@ -1,5 +1,11 @@
 package br.com.fernandoalmeida.pathfinder;
 
+/**
+ * A text based board implementation
+ * 
+ * @author Fernando Costa de Almeida
+ *
+ */
 public class TextBoard extends BoardElement {
 
 	TextBoard(int size) {
@@ -7,33 +13,34 @@ public class TextBoard extends BoardElement {
 	}
 
 	public void draw() {
-		
-		for (int x=0;x<this.getBoardSize();x++) 
+
+		for (int x = 0; x < this.getBoardSize(); x++)
 			System.out.print(" _");
 		System.out.println();
-		for (int y=0;y<this.getBoardSize();y++) {
-			for (int x=0;x<this.getBoardSize();x++) {
-				System.out.print("|"+this.getCel(new Coordinate(x, y)).toString());
-				if (x == this.getBoardSize()-1) System.out.print("|");
+		for (int y = 0; y < this.getBoardSize(); y++) {
+			for (int x = 0; x < this.getBoardSize(); x++) {
+				System.out.print("|" + this.getCel(new Coordinate(x, y)).toString());
+				if (x == this.getBoardSize() - 1)
+					System.out.print("|");
 			}
-			if (y < this.getBoardSize()) System.out.println();
+			if (y < this.getBoardSize())
+				System.out.println();
 		}
-		for (int x=0;x<this.getBoardSize();x++) 
+		for (int x = 0; x < this.getBoardSize(); x++)
 			System.out.print(" -");
 		System.out.println("\n\n");
 
 	}
 
 	public void redraw(long delay) {
-		
+
 		try {
 			Thread.sleep(delay);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 		draw();
-		
 	}
 
 	public void findPathEndingEvent(boolean success) {

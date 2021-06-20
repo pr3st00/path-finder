@@ -5,40 +5,59 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Represents a generic board.
+ * 
+ * @author Fernando Costa de Almeida
+ *
+ */
 public abstract class BoardElement implements Cloneable {
 
 	private CelElement[][] cels;
 	private CelElement currentCel;
+	
 	private int boardSize = 0;
-	private Coordinate currentCoordinate,destinationCoordinate,startingCoordinate;
+	
+	private Coordinate currentCoordinate;
+	private Coordinate destinationCoordinate;
+	private Coordinate startingCoordinate;
+	
 	private boolean hasEndPoint;
 	private boolean hasStartingPoint;
-	private static boolean foundpath;
-	public static int GOING_UP = 1, GOING_DOWN = 2, GOING_LEFT = 3, GOING_RIGHT = 4;
-	private int direction = 0,  redrawDelay = 350;
+	private static boolean foundpath = false;
+	
+	public static final int GOING_UP = 1;
+	public static final int GOING_DOWN = 2;
+	public static final int GOING_LEFT = 3;
+	public static final int GOING_RIGHT = 4;
+	
+	private int direction = 0;
+	private int redrawDelay = 350;
 
 	public abstract void draw();
+
 	public abstract void redraw(long delay);
+
 	public abstract void findPathEndingEvent(boolean success);
 
 	BoardElement(int size) {
 		boardSize = size;
 		hasEndPoint = false;
 		hasStartingPoint = false;
-		foundpath = false;
-		currentCoordinate = new Coordinate(0,0);
+		currentCoordinate = new Coordinate(0, 0);
 		cels = new CelElement[size][size];
+		
 		initialize();
 	}
-	
+
 	BoardElement(int size, int redrawDelay) {
 		this.redrawDelay = redrawDelay;
 		boardSize = size;
 		hasEndPoint = false;
 		hasStartingPoint = false;
-		foundpath = false;
-		currentCoordinate = new Coordinate(0,0);
+		currentCoordinate = new Coordinate(0, 0);
 		cels = new CelElement[size][size];
+		
 		initialize();
 	}
 
@@ -51,54 +70,51 @@ public abstract class BoardElement implements Cloneable {
 	}
 
 	private List<Coordinate> getAvailableCoordinatesFromHere(Coordinate c, boolean sort) {
-		List<Coordinate> paths = new ArrayList<Coordinate>();
+		List<Coordinate> paths = new ArrayList<>();
 
-		if ( isValidCoordinate(new Coordinate(c.getX()+1,c.getY()))              &&
-				getCel(new Coordinate(c.getX()+1,c.getY())).canBeSearched()      &&
-				!getCel(new Coordinate(c.getX()+1,c.getY())).hasBeenSelected()   &&
-				!getCel(new Coordinate(c.getX()+1,c.getY())).hasBeenUsed()    	 &&
-				!getCel(new Coordinate(c.getX()+1,c.getY())).isPartofCurrentPath()
-		) 
-			paths.add(new Coordinate(c.getX()+1,c.getY(),this));
+		if (isValidCoordinate(new Coordinate(c.getX() + 1, c.getY()))
+				&& getCel(new Coordinate(c.getX() + 1, c.getY())).canBeSearched()
+				&& !getCel(new Coordinate(c.getX() + 1, c.getY())).hasBeenSelected()
+				&& !getCel(new Coordinate(c.getX() + 1, c.getY())).hasBeenUsed()
+				&& !getCel(new Coordinate(c.getX() + 1, c.getY())).isPartofCurrentPath())
+			paths.add(new Coordinate(c.getX() + 1, c.getY(), this));
 
-		if ( isValidCoordinate(new Coordinate(c.getX(),c.getY()+1))               &&
-				getCel(new Coordinate(c.getX(),c.getY()+1)).canBeSearched()       &&
-				!getCel(new Coordinate(c.getX(),c.getY()+1)).hasBeenSelected()    &&
-				!getCel(new Coordinate(c.getX(),c.getY()+1)).hasBeenUsed()    	  &&
-				!getCel(new Coordinate(c.getX(),c.getY()+1)).isPartofCurrentPath()
-		) 
-			paths.add(new Coordinate(c.getX(),c.getY()+1,this));
+		if (isValidCoordinate(new Coordinate(c.getX(), c.getY() + 1))
+				&& getCel(new Coordinate(c.getX(), c.getY() + 1)).canBeSearched()
+				&& !getCel(new Coordinate(c.getX(), c.getY() + 1)).hasBeenSelected()
+				&& !getCel(new Coordinate(c.getX(), c.getY() + 1)).hasBeenUsed()
+				&& !getCel(new Coordinate(c.getX(), c.getY() + 1)).isPartofCurrentPath())
+			paths.add(new Coordinate(c.getX(), c.getY() + 1, this));
 
-		if ( isValidCoordinate(new Coordinate(c.getX()-1,c.getY()))                &&
-				getCel(new Coordinate(c.getX()-1,c.getY())).canBeSearched()        &&
-				!getCel(new Coordinate(c.getX()-1,c.getY())).hasBeenSelected()     &&
-				!getCel(new Coordinate(c.getX()-1,c.getY())).hasBeenUsed()    	   &&
-				!getCel(new Coordinate(c.getX()-1,c.getY())).isPartofCurrentPath()
-		) 
-			paths.add(new Coordinate(c.getX()-1,c.getY(),this));
+		if (isValidCoordinate(new Coordinate(c.getX() - 1, c.getY()))
+				&& getCel(new Coordinate(c.getX() - 1, c.getY())).canBeSearched()
+				&& !getCel(new Coordinate(c.getX() - 1, c.getY())).hasBeenSelected()
+				&& !getCel(new Coordinate(c.getX() - 1, c.getY())).hasBeenUsed()
+				&& !getCel(new Coordinate(c.getX() - 1, c.getY())).isPartofCurrentPath())
+			paths.add(new Coordinate(c.getX() - 1, c.getY(), this));
 
-		if ( isValidCoordinate(new Coordinate(c.getX(),c.getY()-1))               &&
-				getCel(new Coordinate(c.getX(),c.getY()-1)).canBeSearched()       &&
-				!getCel(new Coordinate(c.getX(),c.getY()-1)).hasBeenSelected()    &&
-				!getCel(new Coordinate(c.getX(),c.getY()-1)).hasBeenUsed()    	  &&
-				!getCel(new Coordinate(c.getX(),c.getY()-1)).isPartofCurrentPath()
-		) 
-			paths.add(new Coordinate(c.getX(),c.getY()-1,this));
+		if (isValidCoordinate(new Coordinate(c.getX(), c.getY() - 1))
+				&& getCel(new Coordinate(c.getX(), c.getY() - 1)).canBeSearched()
+				&& !getCel(new Coordinate(c.getX(), c.getY() - 1)).hasBeenSelected()
+				&& !getCel(new Coordinate(c.getX(), c.getY() - 1)).hasBeenUsed()
+				&& !getCel(new Coordinate(c.getX(), c.getY() - 1)).isPartofCurrentPath())
+			paths.add(new Coordinate(c.getX(), c.getY() - 1, this));
 
-		if (sort) Collections.sort(paths);
+		if (sort)
+			Collections.sort(paths);
 
 		return paths;
 
 	}
 
 	public boolean setStartingPoint(Coordinate where) {
-		if (!isValidCoordinate(where) || hasStartingPoint)	{
+		if (!isValidCoordinate(where) || hasStartingPoint) {
 			return false;
 		}
 		cels[where.getX()][where.getY()].setAsStartPoint();
-		this.startingCoordinate=where;
+		this.startingCoordinate = where;
 		this.setCurrentCel(where);
-		return(hasStartingPoint = true);
+		return (hasStartingPoint = true);
 	}
 
 	public boolean setEndPoint(Coordinate where) {
@@ -106,23 +122,22 @@ public abstract class BoardElement implements Cloneable {
 			return false;
 		}
 		cels[where.getX()][where.getY()].setAsEndPoint();
-		this.destinationCoordinate=where;
-		return(hasEndPoint = true);
+		this.destinationCoordinate = where;
+		return (hasEndPoint = true);
 	}
 
 	public CelElement getCel(Coordinate where) {
 		if (!isValidCoordinate(where)) {
 			return null;
-		}
-		else {
+		} else {
 			return this.cels[where.getX()][where.getY()];
 		}
 
 	}
 
 	private void initialize() {
-		for (int x=0;x<this.getBoardSize();x++) {
-			for (int y=0;y<this.getBoardSize();y++) {
+		for (int x = 0; x < this.getBoardSize(); x++) {
+			for (int y = 0; y < this.getBoardSize(); y++) {
 				cels[x][y] = new CelElement();
 			}
 		}
@@ -132,10 +147,14 @@ public abstract class BoardElement implements Cloneable {
 		if (isValidCoordinate(where)) {
 			currentCel = cels[where.getX()][where.getY()];
 			currentCel.select();
-			if      (where.getX() > currentCoordinate.getX()) direction = GOING_RIGHT;
-			else if (where.getX() < currentCoordinate.getX()) direction = GOING_LEFT;
-			else if (where.getY() > currentCoordinate.getY()) direction = GOING_UP;
-			else if (where.getY() < currentCoordinate.getY()) direction = GOING_DOWN;
+			if (where.getX() > currentCoordinate.getX())
+				direction = GOING_RIGHT;
+			else if (where.getX() < currentCoordinate.getX())
+				direction = GOING_LEFT;
+			else if (where.getY() > currentCoordinate.getY())
+				direction = GOING_UP;
+			else if (where.getY() < currentCoordinate.getY())
+				direction = GOING_DOWN;
 			currentCoordinate = where;
 		}
 	}
@@ -145,9 +164,9 @@ public abstract class BoardElement implements Cloneable {
 	}
 
 	public void randomize(int probability) {
-		for (int x=0;x<this.getBoardSize();x++) {
-			for (int y=0;y<this.getBoardSize();y++) {
-				if (! cels[x][y].isEndPoint() && ! cels[x][y].isStartingPoint() && (Math.random() * 100 < probability) ) {
+		for (int x = 0; x < this.getBoardSize(); x++) {
+			for (int y = 0; y < this.getBoardSize(); y++) {
+				if (!cels[x][y].isEndPoint() && !cels[x][y].isStartingPoint() && (Math.random() * 100 < probability)) {
 					cels[x][y].selectToBeSearched();
 				}
 			}
@@ -163,21 +182,23 @@ public abstract class BoardElement implements Cloneable {
 
 	private boolean findPath(boolean sort) {
 
-		if (foundpath) return true;
+		if (foundpath)
+			return true;
 
 		redraw(redrawDelay);
 
 		// No path
-		if (! hasStartingPoint || ! hasEndPoint ) return false;
+		if (!hasStartingPoint || !hasEndPoint)
+			return false;
 
 		// Found the end point!
-		if (this.getCurrentCel().isEndPoint()) 
-			return (foundpath=true);
+		if (this.getCurrentCel().isEndPoint())
+			return (foundpath = true);
 
-		List<Coordinate> availablePaths = getAvailableCoordinatesFromHere(currentCoordinate,sort);
+		List<Coordinate> availablePaths = getAvailableCoordinatesFromHere(currentCoordinate, sort);
 		Iterator<Coordinate> i = availablePaths.iterator();
 
-		while (i.hasNext() && ! foundpath) {
+		while (i.hasNext() && !foundpath) {
 
 			Coordinate newCoordinate = i.next();
 
@@ -192,7 +213,7 @@ public abstract class BoardElement implements Cloneable {
 
 		}
 
-		if (! foundpath ) {
+		if (!foundpath) {
 			getCurrentCel().setasPartofCurrentPath(false);
 			redraw(redrawDelay);
 		}

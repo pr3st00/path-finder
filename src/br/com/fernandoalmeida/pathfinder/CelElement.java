@@ -1,21 +1,22 @@
-/**
- * 
- */
 package br.com.fernandoalmeida.pathfinder;
 
 /**
- * @author pr3st00
+ * Represents a cell
+ * 
+ * @author Fernando Costa de Almeida
  *
  */
 public class CelElement {
 
-	private final static int STARTING_POINT = 0;
-	private final static int NORMAL_POINT = 1;
-	private final static int END_POINT = 2;
+	private static final int STARTING_POINT = 0;
+	private static final int NORMAL_POINT = 1;
+	private static final int END_POINT = 2;
+
 	private boolean isSearchable;
 	private boolean isSelected = false;
 	private boolean isPartofCurrentPath = false;
 	private boolean hasBeenUsed = false;
+
 	private int type = NORMAL_POINT;
 
 	public CelElement() {
@@ -29,27 +30,27 @@ public class CelElement {
 	public void selectToBeSearched() {
 		this.isSearchable = true;
 	}
-	
+
 	public void unselectToBeSearched() {
 		this.isSearchable = false;
 	}
 
-	public boolean hasBeenSelected() { 
+	public boolean hasBeenSelected() {
 		return isSelected;
 	}
-	
+
 	public void select() {
 		isSelected = true;
 	}
-	
+
 	public void unSelect() {
 		isSelected = false;
 	}
 
-	public boolean canBeSearched() { 
+	public boolean canBeSearched() {
 		return isSearchable;
 	}
-	
+
 	public boolean isEndPoint() {
 		return type == END_POINT;
 	}
@@ -57,7 +58,7 @@ public class CelElement {
 	public boolean isStartingPoint() {
 		return type == STARTING_POINT;
 	}
-	
+
 	public boolean isNormalPoint() {
 		return type == NORMAL_POINT;
 	}
@@ -71,24 +72,26 @@ public class CelElement {
 		type = STARTING_POINT;
 		isSearchable = true;
 	}
-	
+
 	public void setAsNormalPoint() {
 		type = NORMAL_POINT;
 	}
 
 	public String toString() {
 		switch (type) {
-			case STARTING_POINT: {
-				return "S";
-			}
-			case END_POINT: {
-				return "E";
-			}
-			default: {
-				if (this.isPartofCurrentPath()) return "*";
-				if (this.canBeSearched())       return "O";
-				else return " ";
-			}
+		case STARTING_POINT: {
+			return "S";
+		}
+		case END_POINT: {
+			return "E";
+		}
+		default:
+			if (this.isPartofCurrentPath())
+				return "*";
+			if (this.canBeSearched())
+				return "O";
+			else
+				return " ";
 		}
 	}
 
